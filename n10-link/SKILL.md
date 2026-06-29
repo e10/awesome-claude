@@ -25,8 +25,9 @@ Trigger this skill when the user asks to:
 ## Authentication
 
 All operations require an **n10 API key** (Enterprise plan). It looks like
-`n10_sk_xxxxxxxx`. The user creates one at **n10.in → API Keys**. Treat the key
-as a secret: never print it, never commit it, never paste it into chat or code.
+`n10_sk_xxxxxxxx`. The user creates one in **TinTorch Account → API Keys**
+(account.tintorch.com) — n10's **API Keys** link opens it. Treat the key as a
+secret: never print it, never commit it, never paste it into chat or code.
 
 ## Option A — MCP server (preferred)
 
@@ -134,7 +135,7 @@ relevant. Keep it brief — the short link is the deliverable.
 ## Errors
 
 - `401 / "Invalid or revoked API key"` → key is wrong or revoked; ask the user
-  to re-check it at n10.in → API Keys.
+  to re-check it in TinTorch Account → API Keys (account.tintorch.com).
 - `403 / "Account suspended"` → the account is suspended; nothing to retry.
 - `429 / "Rate limit exceeded"` → wait a moment and retry once.
 

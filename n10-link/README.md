@@ -24,7 +24,9 @@ falls back to the equivalent n10 REST API (`/api/v1/links`) via `curl`.
 ## Requirements
 
 - An [n10](https://n10.in) account with an **API key** (`n10_sk_…`, Enterprise
-  plan). Create one at **n10.in → API Keys**.
+  plan). Create one in **TinTorch Account → API Keys**
+  ([account.tintorch.com](https://account.tintorch.com)); n10's **API Keys**
+  link opens it.
 
 ## Install
 
