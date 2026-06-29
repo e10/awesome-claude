@@ -1,5 +1,5 @@
 {
-  "$comment": "Template for connecting an MCP client (Claude Code, Cursor, …) to the n10 MCP server. Copy into your project's .mcp.json (or ~/.claude.json), then replace the API key. For a self-hosted n10, change the URL origin to your deployment.",
+  "$comment": "Template for connecting an MCP client (Claude Code, Cursor, …) to the n10 MCP server. Copy into your project's .mcp.json (or ~/.claude.json), then replace the API key AND the URL origin with your own n10 deployment. The key only works against the host that created it — if your links are go.example.com, use https://example.com/api/mcp, not n10.in.",
   "mcpServers": {
     "n10": {
       "type": "http",

@@ -28,10 +28,34 @@ All operations require an **n10 API key** (Enterprise plan). It looks like
 `n10_sk_xxxxxxxx`. The user creates one at **n10.in → API Keys**. Treat the key
 as a secret: never print it, never commit it, never paste it into chat or code.
 
+## Choosing your n10 host (important)
+
+n10 can be **self-hosted**, so there is no single global server. An API key only
+works against the *exact deployment that created it* — keys are stored as an
+unsalted hash in that instance's database, so a key minted on one host returns
+`401 Invalid or revoked API key` on any other host (including the public
+`https://n10.in`).
+
+**The host is whatever URL you log into to manage your links.** If your short
+links look like `go.example.com/...`, your n10 is almost certainly at
+`example.com` (or an admin subdomain), *not* `n10.in`.
+
+Set it once via the `N10_BASE_URL` environment variable; everything below
+defaults to `https://n10.in` only if it is unset:
+
+```bash
+export N10_BASE_URL="https://your-n10-host.com"   # no trailing slash
+```
+
+If a correctly-formatted `n10_sk_…` key still returns `401 Invalid or revoked`,
+the host is wrong (or the key is revoked / the account suspended) — fix the host
+before retrying.
+
 ## Option A — MCP server (preferred)
 
-n10 exposes a remote MCP server at `https://n10.in/api/mcp` (a self-hosted
-deployment uses its own origin, e.g. `https://links.acme.com/api/mcp`).
+n10 exposes a remote MCP server at `$N10_BASE_URL/api/mcp` (defaults to
+`https://n10.in/api/mcp`; a self-hosted deployment uses its own origin, e.g.
+`https://links.acme.com/api/mcp`).
 
 ### One-time setup
 
@@ -74,28 +98,32 @@ user. Don't invent slugs — omit `slug` to get a random one.
 ## Option B — REST API (fallback)
 
 If MCP isn't configured and the user prefers not to set it up, use the REST API
-with `curl`. Base URL `https://n10.in`. Always send the key via the
-`Authorization` header.
+with `curl`. The base URL is `$N10_BASE_URL` (defaults to `https://n10.in`).
+Always send the key via the `Authorization` header.
 
 ```bash
+N10="${N10_BASE_URL:-https://n10.in}"
+
 # Shorten a URL
-curl -s -X POST https://n10.in/api/v1/links \
+curl -s -X POST "$N10/api/v1/links" \
   -H "Authorization: Bearer $N10_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "url": "https://example.com/a/very/long/path", "slug": "launch" }'
 
 # List links
-curl -s https://n10.in/api/v1/links?limit=20 \
+curl -s "$N10/api/v1/links?limit=20" \
   -H "Authorization: Bearer $N10_API_KEY"
 
 # Get one link by id
-curl -s https://n10.in/api/v1/links/LINK_ID \
+curl -s "$N10/api/v1/links/LINK_ID" \
   -H "Authorization: Bearer $N10_API_KEY"
 
 # Delete a link
-curl -s -X DELETE https://n10.in/api/v1/links/LINK_ID \
+curl -s -X DELETE "$N10/api/v1/links/LINK_ID" \
   -H "Authorization: Bearer $N10_API_KEY"
 ```
+
+Always quote the URL (the `?limit=` query trips up some shells unquoted).
 
 Read the key from an environment variable (`$N10_API_KEY`) so it never appears
 in the command literally.
@@ -133,8 +161,11 @@ relevant. Keep it brief — the short link is the deliverable.
 
 ## Errors
 
-- `401 / "Invalid or revoked API key"` → key is wrong or revoked; ask the user
-  to re-check it at n10.in → API Keys.
+- `401 / "Invalid or revoked API key"` → the key is valid in format but not
+  found in this host's database. Most often `N10_BASE_URL` points at the wrong
+  deployment (see **Choosing your n10 host**); otherwise the key is revoked or
+  the account suspended. Re-check the host first, then the key at
+  `$N10_BASE_URL` → API Keys.
 - `403 / "Account suspended"` → the account is suspended; nothing to retry.
 - `429 / "Rate limit exceeded"` → wait a moment and retry once.
 

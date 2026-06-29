@@ -23,8 +23,13 @@ falls back to the equivalent n10 REST API (`/api/v1/links`) via `curl`.
 
 ## Requirements
 
-- An [n10](https://n10.in) account with an **API key** (`n10_sk_…`, Enterprise
-  plan). Create one at **n10.in → API Keys**.
+- An n10 account with an **API key** (`n10_sk_…`, Enterprise plan). Create one
+  at your n10 dashboard → **API Keys**.
+- Your n10 **host**. n10 is self-hostable, so a key only works against the
+  deployment that created it. Use the public `https://n10.in` only if that's
+  where you manage your links; otherwise set `N10_BASE_URL` to your own host
+  (e.g. `https://example.com`). A correctly-formatted key that returns
+  `401 Invalid or revoked` almost always means the host is wrong.
 
 ## Install
 
