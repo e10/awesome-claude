@@ -24,32 +24,10 @@ Trigger this skill when the user asks to:
 
 ## Authentication
 
-n10 delegates identity and API keys to **TinTorch Account** — the single source
-of keys for the whole TinTorch suite. Keys look like `tt_live_xxxxxxxx` and are
-created at **account.tintorch.com → Developer → API keys**, where you also pick
-the key's **scopes**:
-
-- `read` — list and look up links.
-- `write` — create (shorten) and delete links.
-
-Grant `write` if you want to shorten links. Treat the key as a secret: never
-print it, never commit it, never paste it into chat or code.
-
-## Choosing your n10 host
-
-The default host is `https://n10.in`. n10 is also self-hostable; if you use your
-own deployment, point the skill at it with the `N10_BASE_URL` environment
-variable (the key is still your TinTorch key — n10 verifies it against TinTorch
-regardless of which n10 host you call):
-
-```bash
-export N10_BASE_URL="https://your-n10-host.com"   # no trailing slash
-```
-
-If a `tt_live_…` key returns `401 Invalid or revoked`, it is revoked, expired,
-or lacks the needed scope — re-check it at account.tintorch.com → Developer →
-API keys. A `403 missing 'write' scope` means the key is read-only; reissue it
-with `write`.
+All operations require an **n10 API key** (Enterprise plan). It looks like
+`n10_sk_xxxxxxxx`. The user creates one in **TinTorch Account → API Keys**
+(account.tintorch.com) — n10's **API Keys** link opens it. Treat the key as a
+secret: never print it, never commit it, never paste it into chat or code.
 
 ## Option A — MCP server (preferred)
 
@@ -161,13 +139,8 @@ relevant. Keep it brief — the short link is the deliverable.
 
 ## Errors
 
-- `401 / "Missing API key"` → no Bearer token was sent; set `N10_API_KEY` /
-  configure the MCP header.
-- `401 / "Invalid or revoked API key"` → TinTorch did not recognise the key. It
-  is revoked, expired, or mistyped. Re-check it at **account.tintorch.com →
-  Developer → API keys**.
-- `403 / "missing the required 'write' scope"` → the key is read-only; reissue
-  it in TinTorch with the `write` scope to create or delete links.
+- `401 / "Invalid or revoked API key"` → key is wrong or revoked; ask the user
+  to re-check it in TinTorch Account → API Keys (account.tintorch.com).
 - `403 / "Account suspended"` → the account is suspended; nothing to retry.
 - `429 / "Rate limit exceeded"` → wait a moment and retry once.
 

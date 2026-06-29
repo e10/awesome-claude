@@ -23,13 +23,10 @@ falls back to the equivalent n10 REST API (`/api/v1/links`) via `curl`.
 
 ## Requirements
 
-- A **TinTorch Account** API key (`tt_live_…`). n10 delegates identity and keys
-  to TinTorch — the single source of keys for the suite — so create one at
-  **account.tintorch.com → Developer → API keys** with the `read` and/or `write`
-  scope (`write` is needed to shorten or delete links).
-- Optionally your n10 **host**. The default is `https://n10.in`; for a
-  self-hosted n10, set `N10_BASE_URL` to your own origin. The same TinTorch key
-  works against any n10 host (n10 verifies it against TinTorch).
+- An [n10](https://n10.in) account with an **API key** (`n10_sk_…`, Enterprise
+  plan). Create one in **TinTorch Account → API Keys**
+  ([account.tintorch.com](https://account.tintorch.com)); n10's **API Keys**
+  link opens it.
 
 ## Install
 
