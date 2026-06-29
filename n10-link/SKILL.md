@@ -31,8 +31,9 @@ secret: never print it, never commit it, never paste it into chat or code.
 
 ## Option A — MCP server (preferred)
 
-n10 exposes a remote MCP server at `https://n10.in/api/mcp` (a self-hosted
-deployment uses its own origin, e.g. `https://links.acme.com/api/mcp`).
+n10 exposes a remote MCP server at `$N10_BASE_URL/api/mcp` (defaults to
+`https://n10.in/api/mcp`; a self-hosted deployment uses its own origin, e.g.
+`https://links.acme.com/api/mcp`).
 
 ### One-time setup
 
@@ -40,7 +41,7 @@ If the n10 tools aren't already available, add the server:
 
 ```bash
 claude mcp add --transport http n10 https://n10.in/api/mcp \
-  --header "Authorization: Bearer n10_sk_xxx"
+  --header "Authorization: Bearer tt_live_xxx"
 ```
 
 Or add it to `.mcp.json` (see `mcp.json` in this skill for a template):
@@ -51,7 +52,7 @@ Or add it to `.mcp.json` (see `mcp.json` in this skill for a template):
     "n10": {
       "type": "http",
       "url": "https://n10.in/api/mcp",
-      "headers": { "Authorization": "Bearer n10_sk_xxx" }
+      "headers": { "Authorization": "Bearer tt_live_xxx" }
     }
   }
 }
@@ -75,28 +76,32 @@ user. Don't invent slugs — omit `slug` to get a random one.
 ## Option B — REST API (fallback)
 
 If MCP isn't configured and the user prefers not to set it up, use the REST API
-with `curl`. Base URL `https://n10.in`. Always send the key via the
-`Authorization` header.
+with `curl`. The base URL is `$N10_BASE_URL` (defaults to `https://n10.in`).
+Always send the key via the `Authorization` header.
 
 ```bash
+N10="${N10_BASE_URL:-https://n10.in}"
+
 # Shorten a URL
-curl -s -X POST https://n10.in/api/v1/links \
+curl -s -X POST "$N10/api/v1/links" \
   -H "Authorization: Bearer $N10_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "url": "https://example.com/a/very/long/path", "slug": "launch" }'
 
 # List links
-curl -s https://n10.in/api/v1/links?limit=20 \
+curl -s "$N10/api/v1/links?limit=20" \
   -H "Authorization: Bearer $N10_API_KEY"
 
 # Get one link by id
-curl -s https://n10.in/api/v1/links/LINK_ID \
+curl -s "$N10/api/v1/links/LINK_ID" \
   -H "Authorization: Bearer $N10_API_KEY"
 
 # Delete a link
-curl -s -X DELETE https://n10.in/api/v1/links/LINK_ID \
+curl -s -X DELETE "$N10/api/v1/links/LINK_ID" \
   -H "Authorization: Bearer $N10_API_KEY"
 ```
+
+Always quote the URL (the `?limit=` query trips up some shells unquoted).
 
 Read the key from an environment variable (`$N10_API_KEY`) so it never appears
 in the command literally.
@@ -126,8 +131,8 @@ relevant. Keep it brief — the short link is the deliverable.
 - **Custom slugs** are 2–40 chars (`a–z`, `A–Z`, `0–9`, `-`, `_`) and must be
   unique. If a slug is taken (HTTP 409 / "slug already taken"), suggest a
   variant or fall back to a generated one.
-- **Custom slugs and extra domains** require a Pro/Enterprise plan; the API key
-  itself requires Enterprise.
+- **Custom slugs and extra domains** require a paid n10 subscription
+  (Pro/Enterprise) on the account.
 - **Plan limits** apply (HTTP 402 "Link limit reached"). Relay the message and
   suggest upgrading or deleting unused links rather than retrying.
 - The `url` must be `http`/`https`. Reject anything else before calling the API.

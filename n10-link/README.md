@@ -36,7 +36,7 @@ falls back to the equivalent n10 REST API (`/api/v1/links`) via `curl`.
 
    ```bash
    claude mcp add --transport http n10 https://n10.in/api/mcp \
-     --header "Authorization: Bearer n10_sk_xxx"
+     --header "Authorization: Bearer tt_live_xxx"
    ```
 
    …or copy `mcp.json` into your project's `.mcp.json` and fill in your key.
