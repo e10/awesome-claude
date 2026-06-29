@@ -23,13 +23,13 @@ falls back to the equivalent n10 REST API (`/api/v1/links`) via `curl`.
 
 ## Requirements
 
-- An n10 account with an **API key** (`n10_sk_…`, Enterprise plan). Create one
-  at your n10 dashboard → **API Keys**.
-- Your n10 **host**. n10 is self-hostable, so a key only works against the
-  deployment that created it. Use the public `https://n10.in` only if that's
-  where you manage your links; otherwise set `N10_BASE_URL` to your own host
-  (e.g. `https://example.com`). A correctly-formatted key that returns
-  `401 Invalid or revoked` almost always means the host is wrong.
+- A **TinTorch Account** API key (`tt_live_…`). n10 delegates identity and keys
+  to TinTorch — the single source of keys for the suite — so create one at
+  **account.tintorch.com → Developer → API keys** with the `read` and/or `write`
+  scope (`write` is needed to shorten or delete links).
+- Optionally your n10 **host**. The default is `https://n10.in`; for a
+  self-hosted n10, set `N10_BASE_URL` to your own origin. The same TinTorch key
+  works against any n10 host (n10 verifies it against TinTorch).
 
 ## Install
 
@@ -39,7 +39,7 @@ falls back to the equivalent n10 REST API (`/api/v1/links`) via `curl`.
 
    ```bash
    claude mcp add --transport http n10 https://n10.in/api/mcp \
-     --header "Authorization: Bearer n10_sk_xxx"
+     --header "Authorization: Bearer tt_live_xxx"
    ```
 
    …or copy `mcp.json` into your project's `.mcp.json` and fill in your key.

@@ -24,32 +24,32 @@ Trigger this skill when the user asks to:
 
 ## Authentication
 
-All operations require an **n10 API key** (Enterprise plan). It looks like
-`n10_sk_xxxxxxxx`. The user creates one at **n10.in → API Keys**. Treat the key
-as a secret: never print it, never commit it, never paste it into chat or code.
+n10 delegates identity and API keys to **TinTorch Account** — the single source
+of keys for the whole TinTorch suite. Keys look like `tt_live_xxxxxxxx` and are
+created at **account.tintorch.com → Developer → API keys**, where you also pick
+the key's **scopes**:
 
-## Choosing your n10 host (important)
+- `read` — list and look up links.
+- `write` — create (shorten) and delete links.
 
-n10 can be **self-hosted**, so there is no single global server. An API key only
-works against the *exact deployment that created it* — keys are stored as an
-unsalted hash in that instance's database, so a key minted on one host returns
-`401 Invalid or revoked API key` on any other host (including the public
-`https://n10.in`).
+Grant `write` if you want to shorten links. Treat the key as a secret: never
+print it, never commit it, never paste it into chat or code.
 
-**The host is whatever URL you log into to manage your links.** If your short
-links look like `go.example.com/...`, your n10 is almost certainly at
-`example.com` (or an admin subdomain), *not* `n10.in`.
+## Choosing your n10 host
 
-Set it once via the `N10_BASE_URL` environment variable; everything below
-defaults to `https://n10.in` only if it is unset:
+The default host is `https://n10.in`. n10 is also self-hostable; if you use your
+own deployment, point the skill at it with the `N10_BASE_URL` environment
+variable (the key is still your TinTorch key — n10 verifies it against TinTorch
+regardless of which n10 host you call):
 
 ```bash
 export N10_BASE_URL="https://your-n10-host.com"   # no trailing slash
 ```
 
-If a correctly-formatted `n10_sk_…` key still returns `401 Invalid or revoked`,
-the host is wrong (or the key is revoked / the account suspended) — fix the host
-before retrying.
+If a `tt_live_…` key returns `401 Invalid or revoked`, it is revoked, expired,
+or lacks the needed scope — re-check it at account.tintorch.com → Developer →
+API keys. A `403 missing 'write' scope` means the key is read-only; reissue it
+with `write`.
 
 ## Option A — MCP server (preferred)
 
@@ -63,7 +63,7 @@ If the n10 tools aren't already available, add the server:
 
 ```bash
 claude mcp add --transport http n10 https://n10.in/api/mcp \
-  --header "Authorization: Bearer n10_sk_xxx"
+  --header "Authorization: Bearer tt_live_xxx"
 ```
 
 Or add it to `.mcp.json` (see `mcp.json` in this skill for a template):
@@ -74,7 +74,7 @@ Or add it to `.mcp.json` (see `mcp.json` in this skill for a template):
     "n10": {
       "type": "http",
       "url": "https://n10.in/api/mcp",
-      "headers": { "Authorization": "Bearer n10_sk_xxx" }
+      "headers": { "Authorization": "Bearer tt_live_xxx" }
     }
   }
 }
@@ -153,19 +153,21 @@ relevant. Keep it brief — the short link is the deliverable.
 - **Custom slugs** are 2–40 chars (`a–z`, `A–Z`, `0–9`, `-`, `_`) and must be
   unique. If a slug is taken (HTTP 409 / "slug already taken"), suggest a
   variant or fall back to a generated one.
-- **Custom slugs and extra domains** require a Pro/Enterprise plan; the API key
-  itself requires Enterprise.
+- **Custom slugs and extra domains** require a paid n10 subscription
+  (Pro/Enterprise) on the account.
 - **Plan limits** apply (HTTP 402 "Link limit reached"). Relay the message and
   suggest upgrading or deleting unused links rather than retrying.
 - The `url` must be `http`/`https`. Reject anything else before calling the API.
 
 ## Errors
 
-- `401 / "Invalid or revoked API key"` → the key is valid in format but not
-  found in this host's database. Most often `N10_BASE_URL` points at the wrong
-  deployment (see **Choosing your n10 host**); otherwise the key is revoked or
-  the account suspended. Re-check the host first, then the key at
-  `$N10_BASE_URL` → API Keys.
+- `401 / "Missing API key"` → no Bearer token was sent; set `N10_API_KEY` /
+  configure the MCP header.
+- `401 / "Invalid or revoked API key"` → TinTorch did not recognise the key. It
+  is revoked, expired, or mistyped. Re-check it at **account.tintorch.com →
+  Developer → API keys**.
+- `403 / "missing the required 'write' scope"` → the key is read-only; reissue
+  it in TinTorch with the `write` scope to create or delete links.
 - `403 / "Account suspended"` → the account is suspended; nothing to retry.
 - `429 / "Rate limit exceeded"` → wait a moment and retry once.
 

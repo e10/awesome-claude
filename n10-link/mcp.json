@@ -5,7 +5,7 @@
       "type": "http",
       "url": "https://n10.in/api/mcp",
       "headers": {
-        "Authorization": "Bearer n10_sk_REPLACE_ME"
+        "Authorization": "Bearer tt_live_REPLACE_ME"
       }
     }
   }
