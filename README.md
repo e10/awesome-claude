@@ -63,6 +63,33 @@ its output for that task gets better — no fine-tuning required.
   — Links Claude to 500+ apps (email, Slack, issues, and more) so it can take real
   actions across your stack.
 
+- **[GitHub Automation](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/github-automation)**
+  — Automate issues, PRs, repos, branches, and Actions.
+
+- **[Slack Automation](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/slack-automation)**
+  — Automate messages, channels, search, reactions, and threads.
+
+- **[Stripe Automation](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/stripe-automation)**
+  — Automate charges, customers, products, and subscriptions — useful for monetizing an app.
+
+- **[Notion Automation](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/notion-automation)**
+  — Automate pages, databases, blocks, comments, and search.
+
+- **[n10-link](https://github.com/e10/awesome-claude/tree/main/n10-link)** — Shorten
+  and manage short links with [n10](https://n10.in) right from your agent: create a
+  short link (with optional custom slug), list links and click counts, look one up,
+  or delete it. Drives the n10 MCP server (`shorten_link`, `list_links`, `get_link`,
+  `delete_link`) with a REST `curl` fallback. Connect with
+  `claude mcp add --transport http n10 https://n10.in/api/mcp --header "Authorization: Bearer n10_sk_xxx"`.
+
+## Research & Writing
+
+- **[recursive-research](https://github.com/ComposioHQ/awesome-claude-skills)** —
+  Recursive, multi-level research across any domain with source tiering for credibility.
+
+- **[Content Research Writer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/content-research-writer)**
+  — Researches a topic, adds citations, and sharpens hooks to produce publish-ready content.
+
 ## Contributing
 
 Contributions are welcome! To add a skill:

@@ -1,0 +1,12 @@
+{
+  "$comment": "Template for connecting an MCP client (Claude Code, Cursor, …) to the n10 MCP server. Copy into your project's .mcp.json (or ~/.claude.json), then replace the API key. For a self-hosted n10, change the URL origin to your deployment.",
+  "mcpServers": {
+    "n10": {
+      "type": "http",
+      "url": "https://n10.in/api/mcp",
+      "headers": {
+        "Authorization": "Bearer n10_sk_REPLACE_ME"
+      }
+    }
+  }
+}
